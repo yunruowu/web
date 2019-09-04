@@ -1,4 +1,10 @@
 use t1;
+
+
+
+
+
+
 CREATE TABLE tt(
     Num_id VARCHAR(40) NOT NULL,
     Ser_id INT NOT NULL,
