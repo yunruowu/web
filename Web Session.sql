@@ -21,3 +21,4 @@ CREATE TABLE State(
 ) ;
 SELECT * FROM t1.State;
 
+DELETE FROM t1.STATE WHERE Ser_id= 1;

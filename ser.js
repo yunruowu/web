@@ -1,6 +1,19 @@
+/**
+* @module ser
+* @author: yunruowu
+* @description:yunrowu是一个爱吃糖的小孩.
+* @since: 创建时间  2019-09-06 09:51:01
+*/
+
 var express = require('express');
 var app = express();
 var ws = require('ws'); // 加载ws模块;
+// var createError = require('http');
+var express = require('express');
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
+app.use(express.static(path.join(__dirname, 'public')));
 
 var mysql = require('mysql');
 var connection = mysql.createConnection({
@@ -9,6 +22,38 @@ var connection = mysql.createConnection({
   password: '123456',
   database: 't1'
 });
+connection.connect();
+
+var express = require('express');
+var app = express();
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser')
+var util = require('util');
+app.use(cookieParser())
+var session = require('express-session');
+var fs = require('fs');
+var urlencodedParser = bodyParser.urlencoded({
+  extended: false
+});
+var path = require('path')
+app.use(express.static(path.join(__dirname, 'public')));
+
+function hash(str) {
+  let md5 = crypto.createHash('md5');
+  md5.update(str); // update数据
+  let result = md5.digest('hex'); // 十六进制输出
+  return result;
+
+}
+app.use(session({
+  secret: 'dev',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 1 * 1000
+  } //30 天免登陆
+}));
+
 
 
 
@@ -41,7 +86,6 @@ var connection = mysql.createConnection({
 //   return time;
 // }
 
-connection.connect();
 
 
 
@@ -128,8 +172,9 @@ console.log(fortime(nb(3))) //一个半小时前
 
 
 
-
-
+var ejs = require('ejs');
+app.engine('html',ejs.__express)
+app.set('view engine', 'html');
 
 app.get('/data', function (req, res) {
   // console.log();
@@ -139,67 +184,61 @@ app.get('/data', function (req, res) {
 })
 app.get('/', function (req, res) {
   console.log("get");
-  res.send("sss");
+  res.render("main");
+  // res.sendFile("main.html");
+})
+app.get('/login',function(req,res){
+  res.render("login");
 })
 
 
-
+var num = 0;
+if (num == 1)
 // 启动websocket服务器
-var wsServer = new ws.Server({
-  host: "127.0.0.1",
-  port: 8081,
-});
-console.log('WebSocket sever is listening at port localhost:8181');
+{
+  var wsServer = new ws.Server({
+    host: "127.0.0.1",
+    port: 8081,
+  });
+  console.log('WebSocket sever is listening at port localhost:8181');
 
-// 建立连接，监听客户端请求，绑定对应事件;
-function on_server_client_comming(wsObj) {
-  console.log("request comming");
-  websocket_add_listener(wsObj);
+  // 建立连接，监听客户端请求，绑定对应事件;
+  function on_server_client_comming(wsObj) {
+    console.log("request comming");
+    websocket_add_listener(wsObj);
+  }
+  wsServer.on("connection", on_server_client_comming);
+
+  // 各事件处理逻辑
+  function websocket_add_listener(wsObj) {
+    console.log("jieshou")
+    wsObj.on("message", function (data) {
+      console.log("request data:" + data);
+
+      setTimeout(() => { //收到请求，回复
+        wsObj.send(JSON.stringify(sqldata));
+        wsObj.send("1秒延时，收到了，正在处理");
+      }, 1000);
+      /*****
+       * 处理业务逻辑
+       */
+      setTimeout(() => { //完成请求，回复
+        wsObj.send("3秒延时，返回数据，关闭连接");
+        wsObj.close()
+      }, 3000);
+
+    });
+
+    wsObj.on("close", function () {
+      console.log("request close");
+    });
+
+    wsObj.on("error", function (err) {
+      console.log("request error", err);
+    });
+  }
+
 }
-wsServer.on("connection", on_server_client_comming);
-
-// 各事件处理逻辑
-function websocket_add_listener(wsObj) {
-  console.log("jieshou")
-  wsObj.on("message", function (data) {
-    console.log("request data:" + data);
-
-    setTimeout(() => { //收到请求，回复
-      wsObj.send(JSON.stringifyz(sqldata));
-      wsObj.send("1秒延时，收到了，正在处理");
-    }, 1000);
-    /*****
-     * 处理业务逻辑
-     */
-    setTimeout(() => { //完成请求，回复
-      wsObj.send("3秒延时，返回数据，关闭连接");
-      wsObj.close()
-    }, 3000);
-
-  });
-
-  wsObj.on("close", function () {
-    console.log("request close");
-  });
-
-  wsObj.on("error", function (err) {
-    console.log("request error", err);
-  });
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 var server = app.listen(8081, function () {
