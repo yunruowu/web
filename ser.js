@@ -1,9 +1,9 @@
 /**
-* @module ser
-* @author: yunruowu
-* @description:yunrowu是一个爱吃糖的小孩.
-* @since: 创建时间  2019-09-06 09:51:01
-*/
+ * @module ser
+ * @author: yunruowu
+ * @description:yunrowu是一个爱吃糖的小孩.
+ * @since: 创建时间  2019-09-06 09:51:01
+ */
 
 var express = require('express');
 var app = express();
@@ -14,7 +14,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 app.use(express.static(path.join(__dirname, 'public')));
-
+var crypto = require('crypto');
 var mysql = require('mysql');
 var connection = mysql.createConnection({
   host: 'localhost',
@@ -45,12 +45,13 @@ function hash(str) {
   return result;
 
 }
+var identityKey = 'skey';
 app.use(session({
   secret: 'dev',
   resave: false,
   saveUninitialized: true,
   cookie: {
-    maxAge: 1 * 1000
+    maxAge: 2000 * 1000
   } //30 天免登陆
 }));
 
@@ -138,7 +139,7 @@ connection.query(sql, function (err, result) {
   console.log(commonTime)
 });
 
-connection.end();
+// connection.end();
 
 
 //如果小于10 则返回'0'+m
@@ -173,7 +174,7 @@ console.log(fortime(nb(3))) //一个半小时前
 
 
 var ejs = require('ejs');
-app.engine('html',ejs.__express)
+app.engine('html', ejs.__express)
 app.set('view engine', 'html');
 
 app.get('/data', function (req, res) {
@@ -182,16 +183,121 @@ app.get('/data', function (req, res) {
   console.log(data);
   res.send(data);
 })
+
+//主界面
 app.get('/', function (req, res) {
-  console.log("get");
-  res.render("main");
-  // res.sendFile("main.html");
+
+  console.log("通过主页登录");
+  if (req.session.username) { //判断session 状态，如果有效，则返回主页，否则转到登录页面
+    console.log(req.session.usergrade);
+    console.log("已经登录了，直接跳转主界面");
+    res.render('main');
+  } else {
+    console.log(req.session.username);
+    console.log("未登录，跳转到登录界面");
+    res.render('login');
+  }
 })
-app.get('/login',function(req,res){
+//main
+app.get('/main', function (req, res) {
+  if (req.session.username == undefined) {
+    res.render('login');
+  }else{
+    console.log("从主页跳转get main");
+  console.log("ss", __dirname);
+  res.render('main');
+  }
+  
+})
+//登录
+app.get('/login', function (req, res) {
   res.render("login");
+
+})
+app.post('/login', urlencodedParser, function (req, res) {
+  var username = req.body.username;
+  var pwd = req.body.password;
+
+  pwd = hash(pwd);
+  console.log("lofgin:", username, pwd);
+  var selSql = 'SELECT * FROM usertable WHERE username = ?';
+  var sqlselname = username;
+  //查
+  connection.query(selSql, sqlselname, function (err, result) {
+    console.log(result[0].password);
+    console.log(result[0]);
+    if (err) {
+      console.log('[SELECT ERROR] - ', err.message);
+      res.send("查询错误！");
+      return;
+    } else {
+      if (result == []) {
+        res.render('login');
+      } else {
+        if (pwd != result[0].password) {
+          console.log(pwd,result[0].password)
+          res.send("密码错误！");
+        } else {
+          req.session.username = username;
+          req.session.usergrade = result[0].usergrade;
+          res.render('main');
+        }
+      }
+    }
+  });
 })
 
+//登出
+app.post('/logout', function (req, res) {
+  req.session.username = null; // 删除session
+  console.log("登出");
+  res.clearCookie(identityKey);
+  res.sendFile(dir + 'login.html')
+});
 
+//注册
+app.get('/register', urlencodedParser, function (req, res) {
+  console.log("sa");
+  res.render("register");
+})
+app.post('/register', urlencodedParser, function (req, res) {
+  console.log("用户注册");
+  console.log(req.body);
+  var username
+  username = req.body.username;
+  var password = req.body.password;
+  var new_pwd = hash(password);
+
+  var addSql = 'INSERT INTO usertable(username,password,usergrade) VALUES(?,?,?)'; 
+  var addSqlParams = [username, new_pwd, 10];
+  var selSql = 'SELECT * FROM usertable';
+  //查
+  connection.query(selSql, function (err, result) {
+    if (err) {
+      console.log('[SELECT ERROR] - ', err.message);
+      return;
+    } else {
+      if (result == [])
+      connection.query(addSql, addSqlParams, function (err, result) {
+        if (err) {
+          console.log('[INSERT ERROR] - ', err.message);
+          return;
+        } else {
+          res.render("main");
+        }
+    
+        console.log('--------------------------INSERT----------------------------');
+        //console.log('INSERT ID:',result.insertId);        
+        console.log('INSERT ID:', result);
+        console.log('-----------------------------------------------------------------\n\n');
+      });
+      else{
+        res.send("用户名已经存在")
+      }
+    }
+  });
+
+})
 var num = 0;
 if (num == 1)
 // 启动websocket服务器
@@ -249,3 +355,4 @@ var server = app.listen(8081, function () {
   console.log("应用实例，访问地址为 http://%s:%s", host, port)
 
 })
+// connection.end();

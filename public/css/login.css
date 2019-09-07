@@ -1,0 +1,21 @@
+
+h3{
+    text-align: center;
+    font-size: 250%;
+}
+h1{
+    font-style: italic;
+    color: rgb(192, 182, 38);
+    margin: 30px;
+    text-align: center;
+}
+#form{
+    top: 1000px;
+    text-align: center;
+    font-size: 150%;
+}
+#link_re{
+    position: relative;
+    text-align: right;
+    right: 0px;
+}

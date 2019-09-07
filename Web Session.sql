@@ -22,3 +22,23 @@ CREATE TABLE State(
 SELECT * FROM t1.State;
 
 DELETE FROM t1.STATE WHERE Ser_id= 1;
+
+
+
+CREATE TABLE t1.usertable(
+    username VARCHAR(40) NOT NULL,
+    passward VARCHAR(50) NOT NULL,
+    usergrade INT NOT NULL ,
+    PRIMARY KEY (username)
+) ;
+SELECT * FROM  t1.usertable;
+INSERT into t1.usertable(username,password,usergrade)
+VALUEs (
+    'root',
+    '123',
+    1
+);
+
+Drop TABLE t1.usertable;
+
+ALTER TABLE t1.usertable CHANGE passward password CHAR(50);
