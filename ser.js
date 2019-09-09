@@ -330,58 +330,41 @@ app.post('/websocket', urlencodedParser, function (req, res) {
 
 var num = 0;
 
-function con_websocket()
-// 启动websocket服务器
-{
-  // var wsServer = new ws.Server({
-  //   host: "127.0.0.1",
-  //   port: 8081,
-  // });
-  var appp = require('http').createServer(handler),
-    wsServer = require('socket.io').listen(appp),
-    fs = require('fs')
+// function con_websocket()
+// // 启动websocket服务器
+// {
+var wsServer = new ws.Server({
+  host: "127.0.0.1",
+  port: 8082,
+});
+console.log('WebSocket sever is listening at port localhost:8181');
+wsServer.on("connection", on_server_client_comming);
+// 建立连接，监听客户端请求，绑定对应事件;
 
-  appp.listen(8081);
-  console.log('WebSocket sever is listening at port localhost:8181');
 
-  // 建立连接，监听客户端请求，绑定对应事件;
-  function on_server_client_comming(wsObj) {
-    console.log("request comming");
-    websocket_add_listener(wsObj);
-  }
-  wsServer.on("connection", on_server_client_comming);
+// }
 
-  // 各事件处理逻辑
-  function websocket_add_listener(wsObj) {
-    console.log("jieshou")
-    wsObj.on("message", function (data) {
-      console.log("request data:" + data);
-
-      setTimeout(() => { //收到请求，回复
-        wsObj.send(JSON.stringify(sqldata));
-        wsObj.send("1秒延时，收到了，正在处理");
-      }, 1000);
-      /*****
-       * 处理业务逻辑
-       */
-      setTimeout(() => { //完成请求，回复
-        wsObj.send("3秒延时，返回数据，关闭连接");
-        wsObj.close()
-      }, 3000);
-
-    });
-    wsObj.send("sss");
-    wsObj.on("close", function () {
-      console.log("request close");
-    });
-
-    wsObj.on("error", function (err) {
-      console.log("request error", err);
-    });
-  }
-
+function on_server_client_comming(wsObj) {
+  console.log("request comming");
+  websocket_add_listener(wsObj);
 }
 
+
+// 各事件处理逻辑
+function websocket_add_listener(wsObj) {
+  console.log("jieshou")
+  wsObj.on("message", function (data) {
+    console.log("request data:" + data);
+    wsObj.send(JSON.stringify(sqldata));
+  });
+  // wsObj.send("sss")
+  wsObj.on("close", function () {
+    console.log("request close");
+  });
+  wsObj.on("error", function (err) {
+    console.log("request error", err);
+  });
+}
 
 var server = app.listen(8081, function () {
 
