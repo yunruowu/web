@@ -233,7 +233,7 @@ app.post('/login', urlencodedParser, function (req, res) {
     } else {
       var obj = result;
       var objStr = JSON.stringify(obj);
-      if (result==false){
+      if (result == false) {
         res.render('register');
       } else {
         if (pwd != result[0].password) {
@@ -322,14 +322,26 @@ app.post('/register', urlencodedParser, function (req, res) {
   });
 
 })
+
+app.post('/websocket', urlencodedParser, function (req, res) {
+  console.log("连接websocket");
+  con_websocket();
+})
+
 var num = 0;
-if (num == 1)
+
+function con_websocket()
 // 启动websocket服务器
 {
-  var wsServer = new ws.Server({
-    host: "127.0.0.1",
-    port: 8081,
-  });
+  // var wsServer = new ws.Server({
+  //   host: "127.0.0.1",
+  //   port: 8081,
+  // });
+  var appp = require('http').createServer(handler),
+    wsServer = require('socket.io').listen(appp),
+    fs = require('fs')
+
+  appp.listen(8081);
   console.log('WebSocket sever is listening at port localhost:8181');
 
   // 建立连接，监听客户端请求，绑定对应事件;
@@ -358,7 +370,7 @@ if (num == 1)
       }, 3000);
 
     });
-
+    wsObj.send("sss");
     wsObj.on("close", function () {
       console.log("request close");
     });

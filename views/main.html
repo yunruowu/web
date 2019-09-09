@@ -4,7 +4,7 @@
 <head>
 	<link rel="stylesheet" type="text/css" href="css/theme.css">
 	<title>LOOK</title>
-
+	<script src="/socket.io/socket.io.js"></script>
 	<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js">
 	</script>
 
@@ -15,20 +15,44 @@
 	<h1>服务器监控系统</h1>
 	<h2>
 		<div id="ser1" class="ser">
-			<span id="sname">服务器</span>
-			<div> </div>
-			<div id='featurename'>cpu</div>
-			<div id="time">时间</div>
-			<div id="val">值</div>
+			<div id="sname">服务器
+				<span class="features" id="sname1"></span>
+			</div>
+			<div id='featurename'>cpu
+				<span class="features" id="featurename1"></span>
+			</div>
+			<div id="time">时间
+				<span class="features" id="time1"></span>
+			</div>
+			<div id="val">值
+				<span class="features" id="val1"></span>
+			</div>
 		</div>
+
 		<div id="ser2" class="ser">
-			<span id="sname">服务器</span>
-			<div id='featurename'>cpu</div>
-			<div id="time">时间<s/div> <div id="val">值</div>
+			<div id="sname">服务器
+				<span class="features" id="sname2"></span>
+			</div>
+			<div id='featurename'>cpu
+				<span class="features" id="featurename2"></span>
+			</div>
+			<div id="time">时间
+				<span class="features" id="time2"></span>
+			</div>
+			<div id="val">值
+				<span class="features" id="val2"></span>
+			</div>
+
 		</div>
 	</h2>
+
 	<h3>
 		<div style="clear:both"></div>
+		<div>
+			<h4></h4>
+			<button id="show_data">显示</button>
+		</div>
+
 		<form action="http://127.0.0.1:8081/logout" method="post">
 			<button type="submit" id="logout"> 登出</button>
 		</form>

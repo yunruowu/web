@@ -1,3 +1,4 @@
+/* 背景 */
 #xx{
     background-image:url("/images/2.jpg");
     background-size: cover;
@@ -9,13 +10,10 @@ h1{
     margin: 30px;
     text-align: center;
 }
+/* 显示服务器 */
 #ser1{
   
-    /* background-image: url("./001.jpg"); */
-    /* background-size: cover; */
-    /* background-color:rgb(141, 235, 196); */
-    /* color:white; */
-  
+
     padding:0px;
     position: relative;
     float: left;
@@ -25,6 +23,7 @@ h1{
     /* position: absolute; */
 }
 #ser2{
+    padding:0px;
     float: right;
     background-image: url('/images/1.jpg'); 
     right: 100px;
@@ -46,6 +45,8 @@ h1{
 #ss{
     color: antiquewhite;
 }
+
+/* 操作用户 */
 #logout{
     left: 90%;
     position: relative;
@@ -57,4 +58,9 @@ h1{
 #img_1{
     width: 400px;
 	height: 400px;
+}
+/* 显示数据 */
+#show_data{
+    position: absolute;
+    left:50%;
 }
