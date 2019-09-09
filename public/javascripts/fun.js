@@ -66,6 +66,24 @@ function web() {
 $(document).ready(function () {
     $("button").click(function () {
         //alert("ok");
-        web();
+        // ?web();
     })
+    $("#deluser").click(function(){
+        $.post('/deluser',function(data,status){
+            console.log("sss");
+            // alert(data);
+
+        })
+    })
+
+    // $("#check").click(function(){
+    //     $.post(
+    //         '/check',
+    //         function (data, status) {
+                
+    //             alert(data)
+                
+    //         }
+    //     )
+    // })
 })

@@ -202,12 +202,12 @@ app.get('/', function (req, res) {
 app.get('/main', function (req, res) {
   if (req.session.username == undefined) {
     res.render('login');
-  }else{
+  } else {
     console.log("从主页跳转get main");
-  console.log("ss", __dirname);
-  res.render('main');
+    console.log("ss", __dirname);
+    res.render('main');
   }
-  
+
 })
 //登录
 app.get('/login', function (req, res) {
@@ -224,18 +224,20 @@ app.post('/login', urlencodedParser, function (req, res) {
   var sqlselname = username;
   //查
   connection.query(selSql, sqlselname, function (err, result) {
-    console.log(result[0].password);
-    console.log(result[0]);
+    // console.log(result[0].password);
+    console.log(result);
     if (err) {
       console.log('[SELECT ERROR] - ', err.message);
       res.send("查询错误！");
       return;
     } else {
-      if (result == []) {
-        res.render('login');
+      var obj = result;
+      var objStr = JSON.stringify(obj);
+      if (result==false){
+        res.render('register');
       } else {
         if (pwd != result[0].password) {
-          console.log(pwd,result[0].password)
+          // console.log(pwd, result[0].password)
           res.send("密码错误！");
         } else {
           req.session.username = username;
@@ -252,13 +254,33 @@ app.post('/logout', function (req, res) {
   req.session.username = null; // 删除session
   console.log("登出");
   res.clearCookie(identityKey);
-  res.sendFile(dir + 'login.html')
+  res.render("login");
 });
 
 //注册
 app.get('/register', urlencodedParser, function (req, res) {
   console.log("sa");
   res.render("register");
+})
+
+//注销
+app.post('/deluser', urlencodedParser, function (req, res) {
+  console.log("zhux");
+  username = req.session.username;
+  console.log(req.session);
+  console.log(req.session.username);
+  var delSql = 'DELETE FROM usertable WHERE username =?';
+  var sqlselname = username;
+  connection.query(delSql, sqlselname, function (err, result) {
+    if (err) {
+      console.log("删除失败！");
+      console.log('[SELECT ERROR] - ', err.message);
+      return;
+    } else {
+      res.render("login");
+    }
+  })
+  // res.render("register");
 })
 app.post('/register', urlencodedParser, function (req, res) {
   console.log("用户注册");
@@ -268,30 +290,32 @@ app.post('/register', urlencodedParser, function (req, res) {
   var password = req.body.password;
   var new_pwd = hash(password);
 
-  var addSql = 'INSERT INTO usertable(username,password,usergrade) VALUES(?,?,?)'; 
+  var addSql = 'INSERT INTO usertable(username,password,usergrade) VALUES(?,?,?)';
   var addSqlParams = [username, new_pwd, 10];
-  var selSql = 'SELECT * FROM usertable';
+  var selSql = 'SELECT * FROM usertable WHERE username = ?';
+  var sqlselname = username;
   //查
-  connection.query(selSql, function (err, result) {
+  connection.query(selSql, sqlselname, function (err, result) {
+    console.log("resul", result);
     if (err) {
       console.log('[SELECT ERROR] - ', err.message);
       return;
     } else {
-      if (result == [])
-      connection.query(addSql, addSqlParams, function (err, result) {
-        if (err) {
-          console.log('[INSERT ERROR] - ', err.message);
-          return;
-        } else {
-          res.render("main");
-        }
-    
-        console.log('--------------------------INSERT----------------------------');
-        //console.log('INSERT ID:',result.insertId);        
-        console.log('INSERT ID:', result);
-        console.log('-----------------------------------------------------------------\n\n');
-      });
-      else{
+      if (result == false)
+        connection.query(addSql, addSqlParams, function (err, result) {
+          if (err) {
+            console.log('[INSERT ERROR] - ', err.message);
+            return;
+          } else {
+            res.render("main");
+          }
+
+          console.log('--------------------------INSERT----------------------------');
+          //console.log('INSERT ID:',result.insertId);        
+          console.log('INSERT ID:', result);
+          console.log('-----------------------------------------------------------------\n\n');
+        });
+      else {
         res.send("用户名已经存在")
       }
     }

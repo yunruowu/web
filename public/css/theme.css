@@ -10,22 +10,33 @@ h1{
     text-align: center;
 }
 #ser1{
+  
+    /* background-image: url("./001.jpg"); */
+    /* background-size: cover; */
+    /* background-color:rgb(141, 235, 196); */
+    /* color:white; */
+  
+    padding:0px;
+    position: relative;
     float: left;
     background-image: url('/images/1.jpg'); 
     left: 100px;
-    position: relative;
+    background-size: cover;
+    /* position: absolute; */
 }
 #ser2{
     float: right;
     background-image: url('/images/1.jpg'); 
     right: 100px;
-    position: relative;
+    background-size: cover;
+    /* position: relative; */
 }
 .ser{
     margin-top: 50px;
     top: 20%;
     width: 400px;
-	height: 500px;
+    height: 400px;
+    position: relative;
 }
 #sname{
     /* font: 1em sans-serif; */
@@ -34,4 +45,16 @@ h1{
 }
 #ss{
     color: antiquewhite;
+}
+#logout{
+    left: 90%;
+    position: relative;
+}
+#deluser{
+    left: 90%;
+    position: relative;
+}
+#img_1{
+    width: 400px;
+	height: 400px;
 }
