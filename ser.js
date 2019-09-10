@@ -24,6 +24,15 @@ var connection = mysql.createConnection({
 });
 connection.connect();
 
+
+var conntoDB = mysql.createConnection({
+  host: '192.168.43.167',
+  user: 'root',
+  password: '123456',
+  database: 'shebang'
+});
+conntoDB.connect();
+
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
@@ -92,7 +101,7 @@ app.use(session({
 
 
 
-connection.query('SELECT 1 + 1 AS solution', function (error, results, fields) {
+conntoDB.query('SELECT 1 + 1 AS solution', function (error, results, fields) {
   if (error) throw error;
   console.log('The solution is: ', results[0].solution);
 });
@@ -109,17 +118,17 @@ connection.query('SELECT 1 + 1 AS solution', function (error, results, fields) {
 //   }
 
 //   console.log('--------------------------INSERT----------------------------');
-//   //console.log('INSERT ID:',result.insertId);        
+//   //console.log('INSERT ID:',result.insertId);
 //   console.log('INSERT ID:', result);
 //   console.log('-----------------------------------------------------------------\n\n');
 // });
-
+// 
 //查询结果
 var data;
 var sqldata;
 var sql = 'SELECT * FROM State';
 //查
-connection.query(sql, function (err, result) {
+conntoDB.query(sql, function (err, result) {
   if (err) {
     console.log('[SELECT ERROR] - ', err.message);
     return;
@@ -311,7 +320,7 @@ app.post('/register', urlencodedParser, function (req, res) {
           }
 
           console.log('--------------------------INSERT----------------------------');
-          //console.log('INSERT ID:',result.insertId);        
+          //console.log('INSERT ID:',result.insertId);
           console.log('INSERT ID:', result);
           console.log('-----------------------------------------------------------------\n\n');
         });
@@ -328,7 +337,25 @@ app.post('/websocket', urlencodedParser, function (req, res) {
   con_websocket();
 })
 
-var num = 0;
+app.get('/more1', urlencodedParser, function (req, res) {
+  console.log("more");
+  console.log(req.session.username);
+  // res.send("122");
+  // res.sendFile(__dirname+'/'+'views/more1.html');
+  res.render("more1");
+})
+
+app.post('/more1', urlencodedParser, function (req, res) {
+  console.log("more");
+  console.log(req.session.username);
+  // res.send("122");
+  // res.sendFile(__dirname+'/'+'views/more1.html');
+  res.render("more1");
+})
+app.get('/more2', urlencodedParser, function (req, res) {
+  res.render("more2");
+})
+
 
 // function con_websocket()
 // // 启动websocket服务器
@@ -352,10 +379,11 @@ function on_server_client_comming(wsObj) {
 
 // 各事件处理逻辑
 function websocket_add_listener(wsObj) {
-  console.log("jieshou")
+  console.log("jieshou");
   wsObj.on("message", function (data) {
     console.log("request data:" + data);
     wsObj.send(JSON.stringify(sqldata));
+
   });
   // wsObj.send("sss")
   wsObj.on("close", function () {
@@ -370,7 +398,7 @@ var server = app.listen(8081, function () {
 
   var host = server.address().address
   var port = server.address().port
-
+  // console.log(__dirname);
   console.log("应用实例，访问地址为 http://%s:%s", host, port)
 
 })

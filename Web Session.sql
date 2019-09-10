@@ -10,7 +10,7 @@ use t1;
 INSERT INTO t1.State(Num_id,Funname,Ser_id,Val)
     VALUES
     ('2019年09月04日 09:43:08 星期si','cpu',1,0.1);
-
+INSERT INTO t1.State(Num_id, Ser_id,Funname,Val) VALUES("123",2,"mem",12.0);
 use t1;
 CREATE TABLE State(
     Num_id VARCHAR(40) NOT NULL,
@@ -38,7 +38,7 @@ VALUEs (
     '123',
     1
 );
-
+INSERT INTO State(Num_id, Ser_id,Funname,Val) VALUES
 Drop TABLE t1.usertable;
 
 ALTER TABLE t1.usertable CHANGE passward password CHAR(50);

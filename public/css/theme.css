@@ -1,66 +1,82 @@
 /* 背景 */
-#xx{
-    background-image:url("/images/2.jpg");
+#xx {
+    background-image: url("/images/2.jpg");
     background-size: cover;
-    
+
 }
-h1{
+
+h1 {
     font-style: italic;
     color: rgb(192, 182, 38);
     margin: 30px;
     text-align: center;
 }
-/* 显示服务器 */
-#ser1{
-  
 
-    padding:0px;
+/* 显示服务器 */
+#ser1 {
+
+
+    padding: 0px;
     position: relative;
     float: left;
-    background-image: url('/images/1.jpg'); 
+    background-image: url('/images/1.jpg');
     left: 100px;
     background-size: cover;
     /* position: absolute; */
 }
-#ser2{
-    padding:0px;
+
+#ser2 {
+    padding: 0px;
     float: right;
-    background-image: url('/images/1.jpg'); 
+    background-image: url('/images/1.jpg');
     right: 100px;
     background-size: cover;
     /* position: relative; */
 }
-.ser{
+
+.ser {
     margin-top: 50px;
     top: 20%;
     width: 400px;
     height: 400px;
     position: relative;
 }
-#sname{
+
+#sname {
     /* font: 1em sans-serif; */
     /* display: inline-block; */
     text-align: center;
 }
-#ss{
+
+#ss {
     color: antiquewhite;
 }
 
 /* 操作用户 */
-#logout{
+#logout {
     left: 90%;
     position: relative;
 }
-#deluser{
+
+#deluser {
     left: 90%;
     position: relative;
 }
-#img_1{
+
+#img_1 {
     width: 400px;
-	height: 400px;
+    height: 400px;
 }
+
 /* 显示数据 */
-#show_data{
+#show_data {
     position: absolute;
-    left:50%;
+    left: 50%;
+}
+
+.more {
+    font-size: 15px;
+    position: absolute;
+    left: 80%;
+    bottom: 10px;
 }
