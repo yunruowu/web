@@ -8,7 +8,7 @@ Web
 
 *2.使用方法*
 ----
-服务器端 node ./ser.js
+服务器端 node ./ser.js 
 客户端直接访问网址进行操作
 
 *3.ToDo*
