@@ -6,34 +6,7 @@ if ("WebSocket" in window) {
 }
 var wsObj = new WebSocket("ws://192.168.43.180:8082");
 
-wsObj.onmessage = function (ev) { //获取后端响应
-	console.log("sssssssssssssssssss");
-	sdata = JSON.parse(ev.data)
-	// clearcontent();
-	// show(sdata);
-	// console.log(sdata);
 
-	var jslength = 0;
-	for (var js2 in sdata) {
-		// console.log(sdata)
-		jslength++;
-	}
-	// console.log("sdsdsd", sdata);
-
-	//  console.log("sdd",sdata[0])
-	for (var i = 0; i < jslength; i++) {
-		// console.log(sdata[i])
-		if (sdata[i].Funname == 'cpu') {
-			datacpu.push(sdata[i].Val * 10);
-			console.log(datacpu)
-		}
-		if (sdata[i].Funname == 'mem') {
-			datamem.push(sdata[i].Val * 10);
-			console.log(datacpu)
-		}
-	}
-	chart()
-};
 function getdata() {
 	console.log("ssssssssssssssssssss")
 	wsObj.onopen = function () { //发送请求
@@ -126,9 +99,6 @@ function firstStep() {
 // console.log("dsds", datacpu)
 $(document).ready(function () {
 	firstStep();
-	setInterval(() => {
-		// websocket_add_listener(wsObj);
-		wsObj.send("sss");
-	}, 1000);
+
 
 });

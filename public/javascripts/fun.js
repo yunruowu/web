@@ -6,7 +6,7 @@ function clearcontent() {
 // 实时显示数据
 function show(sdata) {
     var num = sdata[1].Ser_id - 1
-    alert(num);
+    // alert(num);
     var oul = document.getElementById("sname" + num);
     var oli = document.createElement("span");
     oli.innerHTML = "<span id='ss'>" + sdata[1].Ser_id + "</span>";
@@ -30,7 +30,7 @@ function show(sdata) {
 // var wsObj = new WebSocket("ws://127.0.0.1:8082");
 function web() {
     websocketnum = 1;
-    var wsObj = new WebSocket("ws://127.0.0.1:8082");
+    var wsObj = new WebSocket("ws://192.168.43.180:8082");
     if ("WebSocket" in window) {
         // alert("您的浏览器支持 WebSocket!");
     }
@@ -71,19 +71,21 @@ $(document).ready(function () {
 
         })
     })
-    $("#getmore1").click(function () {
-        $.post('/more1', function (data, status) {
-            console.log(data,status);
-            
-        })
-    })
-    $("#getmore2").click(function () {
-        $.get('/more2', function (data, status) {
+    $("#update").click(function () {
+        $.post('/update', function (data, status) {
             console.log("sss");
             // alert(data);
 
         })
     })
+    $("#xin").click(function () {
+        $.post('/xin', function (data, status) {
+            console.log("sss");
+            // alert(data);
+
+        })
+    })
+    
     // $("#check").click(function(){
     //     $.post(
     //         '/check',

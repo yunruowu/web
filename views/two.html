@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Chart.js 动态图表的使用</title>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+</head>
+<body>
+	<div>
+		<canvas id="chart"></canvas>
+	</div>
+
+	<script type="text/javascript">
+        if ("WebSocket" in window) {
+            // alert("您的浏览器支持 WebSocket!");
+        }
+        var wsObj = new WebSocket("ws://192.168.43.180:8082");
+        var cpu ;
+        var mem;
+        wsObj.onmessage = function (ev) { //获取后端响应
+            console.log("sssssssssssssssssss");
+            sdata = JSON.parse(ev.data)
+            // clearcontent();
+            // show(sdata);
+            // console.log(sdata);
+        
+            var jslength = 0;
+            for (var js2 in sdata) {
+                // console.log(sdata)
+                jslength++;
+            }
+            // console.log("sdsdsd", sdata);
+        
+            //  console.log("sdd",sdata[0])
+            for (var i = 0; i < jslength; i++) {
+                // console.log(sdata[i])
+                if (sdata[i].Funname == 'cpu') {
+                    cpu= sdata[i].Val+10;
+                    
+                }
+                if (sdata[i].Funname == 'mempercent') {
+                    mem = sdata[i].Val;
+                    
+                }
+            }
+            
+        };
+        function getdata() {
+            console.log("ssssssssssssssssssss")
+            wsObj.onopen = function () { //发送请求
+                // alert("open");
+                wsObj.send('chart');
+            };
+            
+         
+            // };
+            wsObj.onerror = function (ev) {
+                //alert("error");
+            };
+        }
+		var dataLabels = ['1h', '2h', '3h', '4h', '5h', '6h', '7h', '8h', '9h', '10h', '11h', '12h', '13h', '14h', '15h', '16h', '17h', '18h', '19h', '20h', '21h', '22h', '23h', '0h'];
+		var dataPV = [0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1];
+		var dataUV = [0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1];
+
+		var config = {
+			type: 'line',
+			data: {
+				labels: dataLabels,
+				datasets: [
+					{
+		                label: 'cpu',
+		                data: dataPV,
+		                backgroundColor: 'rgb(255, 99, 132)',
+						borderColor: 'rgb(255, 99, 132)',
+		                fill: false,
+					},
+					{
+		                label: 'mem',
+		                data: dataUV, 
+		                backgroundColor: 'rgb(75, 192, 192)',
+						borderColor: 'rgb(75, 192, 192)',
+		                fill: false, 
+		            }
+				]
+			},
+			options: {
+				responsive: true,
+				title: {
+					display: true,
+					text: 'cpu/mem 实时统计'
+				},
+			}
+		};
+
+		var ctx = document.getElementById('chart').getContext('2d');
+		var chart = new Chart(ctx, config);
+
+		setInterval(function() {
+			if (config.data.datasets.length > 0) {
+                wsObj.send("two");
+				var last = parseInt(dataLabels[dataLabels.length - 1]);
+				var label = last + 1;
+				if (last >= 23) {
+					label = 0;
+				}
+				label = label + 'h';
+
+				dataLabels.push(label);
+				dataPV.push(cpu);
+				dataUV.push(mem);
+
+				dataLabels.shift();
+				dataPV.shift();
+				dataUV.shift();
+
+				chart.update();
+			}
+		}, 1000);
+
+		function getRandomNum(min, max) {
+		    var range = max - min;
+		    var rand = Math.random();
+		    return(min + Math.round(rand * range));
+		}
+
+	</script>
+</body>
+</html>

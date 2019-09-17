@@ -19,7 +19,8 @@ h1 {
     padding: 0px;
     position: relative;
     float: left;
-    background-image: url('/images/1.jpg');
+    background-color: aliceblue;
+    /* background-image: url('/images/1.jpg'); */
     left: 100px;
     background-size: cover;
     /* position: absolute; */
@@ -28,7 +29,8 @@ h1 {
 #ser2 {
     padding: 0px;
     float: right;
-    background-image: url('/images/1.jpg');
+    background-color: aliceblue;
+    /* background-image: url('/images/1.jpg'); */
     right: 100px;
     background-size: cover;
     /* position: relative; */
@@ -43,6 +45,7 @@ h1 {
 }
 
 #sname {
+    font-size: 100px;
     /* font: 1em sans-serif; */
     /* display: inline-block; */
     text-align: center;
@@ -68,6 +71,19 @@ h1 {
     height: 400px;
 }
 
+#ser1_cpu {
+    position: absolute;
+    left: 20px;
+}
+
+#ser1_mem {
+    position: absolute;
+    left: 300px;
+}
+
+.feature{
+    font-size: 100px;
+}
 /* 显示数据 */
 #show_data {
     position: absolute;
@@ -79,4 +95,9 @@ h1 {
     position: absolute;
     left: 80%;
     bottom: 10px;
+}
+#img_1{
+    height: 100px;
+    width: 100px;
+    
 }

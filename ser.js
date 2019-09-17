@@ -26,12 +26,14 @@ connection.connect();
 
 
 var conntoDB = mysql.createConnection({
-  host: '192.168.43.167',
+  host: '192.168.43.212',
   user: 'root',
   password: '123456',
   database: 'shebang'
 });
 conntoDB.connect();
+// conntoDB = connection;
+
 
 var express = require('express');
 var app = express();
@@ -107,22 +109,8 @@ conntoDB.query('SELECT 1 + 1 AS solution', function (error, results, fields) {
 });
 
 
-// var nowDate = new Date().getTime();
-// var addSql = 'INSERT INTO State(Num_id, Ser_id,Funname,Val) VALUES(?,?,?,?)';
-// var addSqlParams = [nowDate, '3', 'cpu', '0.1', ];
-// //增
-// connection.query(addSql, addSqlParams, function (err, result) {
-//   if (err) {
-//     console.log('[INSERT ERROR] - ', err.message);
-//     return;
-//   }
 
-//   console.log('--------------------------INSERT----------------------------');
-//   //console.log('INSERT ID:',result.insertId);
-//   console.log('INSERT ID:', result);
-//   console.log('-----------------------------------------------------------------\n\n');
-// });
-// 
+
 //查询结果
 var data;
 var sqldata;
@@ -143,7 +131,7 @@ conntoDB.query(sql, function (err, result) {
   //  var obj = JSON.parse(result);
   //  var obj = result.parseJSON();
   //  console.log(obj[1]);
-  var unixTimestamp = new Date(parseInt(result[1].Num_id));
+  var unixTimestamp = new Date(parseInt(result[0].Num_id));
   commonTime = unixTimestamp.toLocaleString();
   console.log(commonTime)
 });
@@ -209,6 +197,7 @@ app.get('/', function (req, res) {
 })
 //main
 app.get('/main', function (req, res) {
+  console.log("hjcccccccccccccc",req.session)
   if (req.session.username == undefined) {
     res.render('login');
   } else {
@@ -257,7 +246,13 @@ app.post('/login', urlencodedParser, function (req, res) {
     }
   });
 })
-
+app.get('/one', urlencodedParser, function (req, res) {
+  console.log("more");
+  console.log(req.session);
+  // res.send("122");
+  // res.sendFile(__dirname+'/'+'views/more1.html');
+  res.render("one");
+})
 //登出
 app.post('/logout', function (req, res) {
   req.session.username = null; // 删除session
@@ -336,24 +331,69 @@ app.post('/websocket', urlencodedParser, function (req, res) {
   console.log("连接websocket");
   con_websocket();
 })
+app.get('/update', urlencodedParser, function (req, res) {
+  console.log("update")
+  console.log(req.session)
+  console.log(req.session.username);
+  // res.render('login')
+  res.render("update");
+})
+app.post('/update', urlencodedParser, function (req, res) {
+  var udSql = "UPDATE usertable SET password = ? where username = ?";
+  var pw = req.body.password;
+  var newpw = hash(req.body.newpassword);
+  var un = req.body.username;
+  var selSql = 'SELECT * FROM usertable WHERE username = ?';
+  var sqlselname = un;
+  console.log(un)
+  var sqlselname = [newpw, un];
 
-app.get('/more1', urlencodedParser, function (req, res) {
-  console.log("more");
+  connection.query(selSql, un, function (err, result) {
+    console.log(result)
+    if (err) {
+      console.log("删除失败！");
+      console.log('[SELECT ERROR] - ', err.message);
+      return;
+    } else {
+      if (result[0].password != hash(pw)) {
+        res.send("密码错误@")
+      } else {
+        connection.query(udSql, sqlselname, function (err, result) {
+          if (err) {
+            console.log("xiuai失败！");
+            // console.log('[SELECT ERROR] - ', err.message);
+            res.send("修改错误")
+            return;
+          } else {
+            res.render("login");
+          }
+        })
+      }
+    }
+  })
+})
+app.post('/xin',urlencodedParser,function(req,res){
+  console.log("sds",__dirname);
+  console.log(req.session.username);
+  res.render("one")
+  // res.sendFile(__dirname+'/views/'+"one.html")
+  // res.send("login");
+})
+app.post('/one', urlencodedParser, function (req, res) {
+  console.log("two");
   console.log(req.session.username);
   // res.send("122");
   // res.sendFile(__dirname+'/'+'views/more1.html');
-  res.render("more1");
+  // res.redirect(301, 'http://www.baidu.com');
+  res.render("one");
 })
-
-app.post('/more1', urlencodedParser, function (req, res) {
-  console.log("more");
-  console.log(req.session.username);
-  // res.send("122");
-  // res.sendFile(__dirname+'/'+'views/more1.html');
-  res.render("more1");
+app.get('/one', urlencodedParser, function (req, res) {
+  // if(req.session)?
+  console.log(res.session);
+  res.render("one");
 })
-app.get('/more2', urlencodedParser, function (req, res) {
-  res.render("more2");
+app.get('/two', urlencodedParser, function (req, res) {
+  res.render("two");
 })
 
 
@@ -361,7 +401,7 @@ app.get('/more2', urlencodedParser, function (req, res) {
 // // 启动websocket服务器
 // {
 var wsServer = new ws.Server({
-  host: "127.0.0.1",
+  host: "192.168.43.180",
   port: 8082,
 });
 console.log('WebSocket sever is listening at port localhost:8181');
@@ -380,9 +420,26 @@ function on_server_client_comming(wsObj) {
 // 各事件处理逻辑
 function websocket_add_listener(wsObj) {
   console.log("jieshou");
+  
   wsObj.on("message", function (data) {
+    if (data == 'chart') {
+      sendtoc();
+    }
+    if (data == 'one') {
+      sendtoc(1);
+      console.log("woshicuowu")
+      wsObj.send(JSON.stringify(sqldata));
+    }if(data=="two"){
+      sendtoc(2);
+      wsObj.send(JSON.stringify(sqldata));
+    }
+     else {
+      wsObj.send(JSON.stringify(sqldata));
+    }
+    
     console.log("request data:" + data);
-    wsObj.send(JSON.stringify(sqldata));
+
+
 
   });
   // wsObj.send("sss")
@@ -393,6 +450,76 @@ function websocket_add_listener(wsObj) {
     console.log("request error", err);
   });
 }
+
+
+function chart(num) {
+  // var sqldata;
+  var sql = "SELECT * FROM State where Ser_id = ? order by Num_id desc limit 2 ";
+  //查
+  
+  conntoDB.query(sql,num, function (err, result) {
+    if (err) {
+      console.log('[SELECT ERROR] - ', err.message);
+      return;
+    }
+    // console.log(result)
+    data = result;
+    sqldata = result;
+    // console.log(typeof (result));
+    // console.log(result[1].Num_id);
+    // console.log('--------------------------SELECT----------------------------');
+    // // console.log(result);
+    // console.log('------------------------------------------------------------\n\n');
+    //  var obj = JSON.parse(result);
+    //  var obj = result.parseJSON();
+    //  console.log(obj[1]);
+    // var unixTimestamp = new Date(parseInt(result[0].Num_id));
+    // commonTime = unixTimestamp.toLocaleString();
+    // console.log(commonTime)
+  });
+}
+
+function getRandomNum(min, max) {
+  var range = max - min;
+  var rand = Math.random();
+  return parseInt(min + Math.round(rand * range));
+}
+
+function sendtoc(num) {
+ 
+    console.log("sss");
+    var nowDate = new Date().getTime();
+    // var addSql = 'INSERT INTO State(Num_id, Ser_id,Funname,Val) VALUES(?,?,?,?)';
+    // var fun = "cpu"
+    // if (nowDate % 2 == 1) {
+    //   fun = 'mem'
+    // }
+    // // var addSqlParams = [parseInt(nowDate/1000), 2, fun,Math.round(Math.random()*10)];
+    // //增
+    // console.log(typeof(getRandomNum(0,10)))
+    // conntoDB.query(addSql, addSqlParams, function (err, result) {
+    //   if (err) {
+    //     console.log('[INSERT ERROR] - ', err.message);
+    //     return;
+    //   }
+
+    //   // console.log('--------------------------INSERT----------------------------');
+    //   // //console.log('INSERT ID:',result.insertId);
+    //   // // console.log('INSERT ID:', result);
+    //   // console.log('-----------------------------------------------------------------\n\n');
+    // });
+    chart(num);
+    console.log("发送")
+
+    function websocket_add_listener(wsObj) {
+      console.log("sdss",sqldata)
+      wsObj.send(JSON.stringify(sqldata));
+    }
+ 
+}
+
+
+
 
 var server = app.listen(8081, function () {
 
