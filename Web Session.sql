@@ -43,8 +43,8 @@ CREATE TABLE t1.usertable(
 SELECT * FROM  t1.usertable;
 INSERT into t1.usertable(username,password,usergrade)
 VALUEs (
-    'root',
-    '123',
+    '000',
+    '202cb962ac59075b964b07152d234b70',
     1
 );
 INSERT INTO State(Num_id, Ser_id,Funname,Val) VALUES

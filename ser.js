@@ -5,10 +5,9 @@
  * @since: 创建时间  2019-09-06 09:51:01
  */
 
-var express = require('express');
+
 var app = express();
 var ws = require('ws'); // 加载ws模块;
-// var createError = require('http');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -16,6 +15,11 @@ var logger = require('morgan');
 app.use(express.static(path.join(__dirname, 'public')));
 var crypto = require('crypto');
 var mysql = require('mysql');
+var session = require('express-session');
+var fs = require('fs');
+var urlencodedParser = bodyParser.urlencoded({
+  extended: false
+});
 var connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
@@ -32,22 +36,8 @@ var conntoDB = mysql.createConnection({
   database: 'shebang'
 });
 conntoDB.connect();
-// conntoDB = connection;
 
-
-var express = require('express');
-var app = express();
-var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser')
-var util = require('util');
 app.use(cookieParser())
-var session = require('express-session');
-var fs = require('fs');
-var urlencodedParser = bodyParser.urlencoded({
-  extended: false
-});
-var path = require('path')
-app.use(express.static(path.join(__dirname, 'public')));
 
 function hash(str) {
   let md5 = crypto.createHash('md5');
@@ -123,14 +113,10 @@ conntoDB.query(sql, function (err, result) {
   }
   data = result;
   sqldata = result;
-  // console.log(typeof (result));
-  // console.log(result[1].Num_id);
+
   console.log('--------------------------SELECT----------------------------');
   console.log(result);
   console.log('------------------------------------------------------------\n\n');
-  //  var obj = JSON.parse(result);
-  //  var obj = result.parseJSON();
-  //  console.log(obj[1]);
   var unixTimestamp = new Date(parseInt(result[0].Num_id));
   commonTime = unixTimestamp.toLocaleString();
   console.log(commonTime)
@@ -197,7 +183,7 @@ app.get('/', function (req, res) {
 })
 //main
 app.get('/main', function (req, res) {
-  console.log("hjcccccccccccccc",req.session)
+  console.log("hjcccccccccccccc", req.session)
   if (req.session.username == undefined) {
     res.render('login');
   } else {
@@ -246,6 +232,30 @@ app.post('/login', urlencodedParser, function (req, res) {
     }
   });
 })
+
+
+
+app.post('/sss', urlencodedParser, function (req, res) {
+  if (req.session.username == undefined) {
+    res.render('login');
+  }
+
+
+  console.log(req.session.usergrade)
+  res.sendFile(__dirname + "/" + "views/one.html");
+})
+app.post('/eee', urlencodedParser, function (req, res) {
+  if (req.session.username == undefined) {
+    res.render('login');
+  }
+  console.log(req.session.usergrade)
+  if (req.session.usergrade > 1) {
+    res.send("权限不够")
+  }
+  res.sendFile(__dirname + "/" + "views/two.html");
+})
+
+
 app.get('/one', urlencodedParser, function (req, res) {
   console.log("more");
   console.log(req.session);
@@ -372,8 +382,8 @@ app.post('/update', urlencodedParser, function (req, res) {
     }
   })
 })
-app.post('/xin',urlencodedParser,function(req,res){
-  console.log("sds",__dirname);
+app.post('/xin', urlencodedParser, function (req, res) {
+  console.log("sds", __dirname);
   console.log(req.session.username);
   res.render("one")
   // res.sendFile(__dirname+'/views/'+"one.html")
@@ -397,19 +407,13 @@ app.get('/two', urlencodedParser, function (req, res) {
 })
 
 
-// function con_websocket()
-// // 启动websocket服务器
-// {
+
 var wsServer = new ws.Server({
   host: "192.168.43.180",
   port: 8082,
 });
 console.log('WebSocket sever is listening at port localhost:8181');
 wsServer.on("connection", on_server_client_comming);
-// 建立连接，监听客户端请求，绑定对应事件;
-
-
-// }
 
 function on_server_client_comming(wsObj) {
   console.log("request comming");
@@ -420,7 +424,7 @@ function on_server_client_comming(wsObj) {
 // 各事件处理逻辑
 function websocket_add_listener(wsObj) {
   console.log("jieshou");
-  
+
   wsObj.on("message", function (data) {
     if (data == 'chart') {
       sendtoc();
@@ -429,14 +433,14 @@ function websocket_add_listener(wsObj) {
       sendtoc(1);
       console.log("woshicuowu")
       wsObj.send(JSON.stringify(sqldata));
-    }if(data=="two"){
+    }
+    if (data == "two") {
       sendtoc(2);
       wsObj.send(JSON.stringify(sqldata));
-    }
-     else {
+    } else {
       wsObj.send(JSON.stringify(sqldata));
     }
-    
+
     console.log("request data:" + data);
 
 
@@ -456,26 +460,14 @@ function chart(num) {
   // var sqldata;
   var sql = "SELECT * FROM State where Ser_id = ? order by Num_id desc limit 2 ";
   //查
-  
-  conntoDB.query(sql,num, function (err, result) {
+
+  conntoDB.query(sql, num, function (err, result) {
     if (err) {
       console.log('[SELECT ERROR] - ', err.message);
       return;
     }
-    // console.log(result)
     data = result;
     sqldata = result;
-    // console.log(typeof (result));
-    // console.log(result[1].Num_id);
-    // console.log('--------------------------SELECT----------------------------');
-    // // console.log(result);
-    // console.log('------------------------------------------------------------\n\n');
-    //  var obj = JSON.parse(result);
-    //  var obj = result.parseJSON();
-    //  console.log(obj[1]);
-    // var unixTimestamp = new Date(parseInt(result[0].Num_id));
-    // commonTime = unixTimestamp.toLocaleString();
-    // console.log(commonTime)
   });
 }
 
@@ -486,47 +478,19 @@ function getRandomNum(min, max) {
 }
 
 function sendtoc(num) {
- 
-    console.log("sss");
-    var nowDate = new Date().getTime();
-    // var addSql = 'INSERT INTO State(Num_id, Ser_id,Funname,Val) VALUES(?,?,?,?)';
-    // var fun = "cpu"
-    // if (nowDate % 2 == 1) {
-    //   fun = 'mem'
-    // }
-    // // var addSqlParams = [parseInt(nowDate/1000), 2, fun,Math.round(Math.random()*10)];
-    // //增
-    // console.log(typeof(getRandomNum(0,10)))
-    // conntoDB.query(addSql, addSqlParams, function (err, result) {
-    //   if (err) {
-    //     console.log('[INSERT ERROR] - ', err.message);
-    //     return;
-    //   }
 
-    //   // console.log('--------------------------INSERT----------------------------');
-    //   // //console.log('INSERT ID:',result.insertId);
-    //   // // console.log('INSERT ID:', result);
-    //   // console.log('-----------------------------------------------------------------\n\n');
-    // });
-    chart(num);
-    console.log("发送")
+  console.log("sss");
+  var nowDate = new Date().getTime();
+  chart(num);
+  console.log("发送")
 
-    function websocket_add_listener(wsObj) {
-      console.log("sdss",sqldata)
-      wsObj.send(JSON.stringify(sqldata));
-    }
- 
+  function websocket_add_listener(wsObj) {
+    console.log("sdss", sqldata)
+    wsObj.send(JSON.stringify(sqldata));
+  }
+
 }
 
 
 
-
-var server = app.listen(8081, function () {
-
-  var host = server.address().address
-  var port = server.address().port
-  // console.log(__dirname);
-  console.log("应用实例，访问地址为 http://%s:%s", host, port)
-
-})
-// connection.end();
+var server = app.listen(8081, "192.168.43.180");

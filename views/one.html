@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Chart.js 动态图表的使用</title>
+	<title>服务器动态显示</title>
 	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 </head>
 <body>
@@ -57,7 +57,7 @@
                 //alert("error");
             };
         }
-		var dataLabels = ['1h', '2h', '3h', '4h', '5h', '6h', '7h', '8h', '9h', '10h', '11h', '12h', '13h', '14h', '15h', '16h', '17h', '18h', '19h', '20h', '21h', '22h', '23h', '0h'];
+		var dataLabels = ['1s', '2s', '3s', '4s', '5s', '6s', '7s', '8s', '9s', '10s', '11s', '12s', '13s', '14s', '15s', '16s', '17s', '18s', '19s', '20s', '21s', '22s', '23s', '0s'];
 		var dataPV = [0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1];
 		var dataUV = [0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1];
 
@@ -102,7 +102,7 @@
 				if (last >= 23) {
 					label = 0;
 				}
-				label = label + 'h';
+				label = label + 's';
 
 				dataLabels.push(label);
 				dataPV.push(cpu);
@@ -114,7 +114,7 @@
 
 				chart.update();
 			}
-		}, 1000);
+		}, 300);
 
 		function getRandomNum(min, max) {
 		    var range = max - min;
